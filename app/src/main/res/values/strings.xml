@@ -1,3 +1,17 @@
 <resources>
     <string name="app_name">PersonalizedLearningApp</string>
+    <string name="profile_username">Username</string>
+    <string name="profile_total_questions">Total Questions: 10</string>
+    <string name="profile_correct_answers">Correct Answers: 10</string>
+    <string name="profile_incorrect_answers">Incorrect Answers: 0</string>
+    <string name="profile_share">Share</string>
+    <string name="upgrade_title">Upgrade your experience</string>
+    <string name="starter">Starter</string>
+    <string name="starter_desc">Improved quiz generation</string>
+    <string name="intermediate">Intermediate</string>
+    <string name="intermediate_desc">Improved explanations</string>
+    <string name="advanced">Advanced</string>
+    <string name="advanced_desc">All features unlocked</string>
+    <string name="purchase">Purchase</string>
+
 </resources>

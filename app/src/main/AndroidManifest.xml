@@ -27,6 +27,11 @@
         <activity android:name=".activities.DashboardActivity" android:exported="false"/>
         <activity android:name=".activities.ContentActivity" android:exported="false"/>
         <activity android:name=".activities.TutorActivity" android:exported="false"/>
+        <activity android:name=".activities.ShareProfileActivity" android:exported="false"/>
+        <activity android:name=".activities.HistoryActivity" android:exported="false"/>
+        <activity android:name=".activities.UpgradeAccountActivity" android:exported="false"/>
+
+
     </application>
 
 </manifest>
