@@ -5,14 +5,29 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
+
 import androidx.appcompat.app.AppCompatActivity;
+
+import com.android.volley.DefaultRetryPolicy;
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
+import com.android.volley.AuthFailureError;
 import com.example.personalizedlearningapp.R;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.nio.charset.StandardCharsets;
 
 public class TutorActivity extends AppCompatActivity {
 
     EditText inputQuestion;
     Button btnAsk;
     TextView textResponse;
+
+    private static final String API_URL = "https://llm-1n24.onrender.com/generate";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -24,22 +39,55 @@ public class TutorActivity extends AppCompatActivity {
         textResponse = findViewById(R.id.textResponse);
 
         btnAsk.setOnClickListener(v -> {
-            String question = inputQuestion.getText().toString().trim().toLowerCase();
+            String question = inputQuestion.getText().toString().trim();
             if (question.isEmpty()) {
                 Toast.makeText(this, "Please enter a question", Toast.LENGTH_SHORT).show();
                 return;
             }
+            sendToLLM(question);
+        });
+    }
 
-            String response;
-            if (question.contains("array")) {
-                response = "An array is a data structure that holds elements of the same type in a fixed-size list.";
-            } else if (question.contains("linked list")) {
-                response = "A linked list is a linear data structure where each element points to the next.";
-            } else {
-                response = "That’s a great question! I’ll get back to you with more info soon.";
+    private void sendToLLM(String question) {
+        RequestQueue queue = Volley.newRequestQueue(this);
+
+        StringRequest request = new StringRequest(Request.Method.POST, API_URL,
+                response -> {
+                    try {
+                        JSONObject obj = new JSONObject(response);
+                        String reply = obj.getString("response");
+                        textResponse.setText(reply);
+                    } catch (JSONException e) {
+                        textResponse.setText("Error parsing response.");
+                    }
+                },
+                error -> {
+                    textResponse.setText("Error: " + error.toString());
+                }) {
+
+            @Override
+            public String getBodyContentType() {
+                return "application/json; charset=utf-8";
             }
 
-            textResponse.setText(response);
-        });
+            @Override
+            public byte[] getBody() throws AuthFailureError {
+                JSONObject json = new JSONObject();
+                try {
+                    json.put("prompt", question);
+                } catch (JSONException e) {
+                    throw new RuntimeException(e);
+                }
+                return json.toString().getBytes(StandardCharsets.UTF_8);
+            }
+        };
+
+        request.setRetryPolicy(new DefaultRetryPolicy(
+                15000,
+                DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
+                DefaultRetryPolicy.DEFAULT_BACKOFF_MULT
+        ));
+
+        queue.add(request);
     }
 }
